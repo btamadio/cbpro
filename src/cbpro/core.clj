@@ -24,7 +24,7 @@
          {:bids (snapshot-bids event)
           :asks (snapshot-asks event)}))
 
-(defn handle-change [order-book product-id change]
+(defn apply-change [product-id order-book change]
   (let [side ({"buy" :bids "sell" :asks} (change 0))
         price (Double/parseDouble (change 1))
         size (Double/parseDouble (change 2))]
@@ -33,12 +33,7 @@
       (assoc-in order-book [product-id side price] size))))
 
 (defn apply-changes [order-book product-id changes]
-  (if (empty? changes)
-    order-book
-    (recur
-     (handle-change order-book product-id (first changes))
-     product-id
-     (rest changes))))
+  (reduce (partial apply-change product-id) order-book changes))
 
 (defn update-timestamp [order-book product-id timestamp]
   (assoc-in order-book [product-id :timestamp] timestamp))

@@ -25,41 +25,41 @@
                   "ETH-USD" {:bids (sorted-map) :asks (sorted-map)}}]
     (is (= actual expected))))
 
-(deftest test-handle-change
+(deftest test-apply-change
   (let [ob {"BTC-USD" {:bids {10101.10 0.45054140 10100.90 1.4}
                        :asks {10102.55 0.57753524 10104.47 0.123}}}]
     (testing "test buy side low bid"
-      (let [actual (handle-change ob "BTC-USD" ["buy" "10099.8" "0.25"])
+      (let [actual (apply-change "BTC-USD" ob ["buy" "10099.8" "0.25"])
             expected {"BTC-USD"
                       {:bids {10101.10 0.45054140 10100.90 1.4 10099.8 0.25}
                        :asks {10102.55 0.57753524 10104.47 0.123}}}]
         (is (= actual expected))))
     (testing "test buy side high bid"
-      (let [actual (handle-change ob "BTC-USD" ["buy" "10101.25" "1"])
+      (let [actual (apply-change "BTC-USD" ob ["buy" "10101.25" "1"])
             expected {"BTC-USD"
                       {:bids {10101.25 1.0 10101.10 0.45054140 10100.90 1.4}
                        :asks {10102.55 0.57753524 10104.47 0.123}}}]
         (is (= actual expected))))
     (testing "test buy side zero"
-      (let [actual (handle-change ob "BTC-USD" ["buy" "10101.10" "0"])
+      (let [actual (apply-change "BTC-USD" ob ["buy" "10101.10" "0"])
             expected {"BTC-USD"
                       {:bids {10100.90 1.4}
                        :asks {10102.55 0.57753524 10104.47 0.123}}}]
         (is (= actual expected))))
     (testing "test sell side high ask"
-      (let [actual (handle-change ob "BTC-USD" ["sell" "10105.5" "2"])
+      (let [actual (apply-change "BTC-USD" ob ["sell" "10105.5" "2"])
             expected {"BTC-USD"
                       {:bids {10101.10 0.45054140 10100.90 1.4}
                        :asks {10102.55 0.57753524 10104.47 0.123 10105.5 2.0}}}]
         (is (= actual expected))))    
     (testing "test sell side low ask"
-      (let [actual (handle-change ob "BTC-USD" ["sell" "10102.1" "0.1"])
+      (let [actual (apply-change "BTC-USD" ob ["sell" "10102.1" "0.1"])
             expected {"BTC-USD"
                       {:bids {10101.10 0.45054140 10100.90 1.4}
                        :asks {10102.1 0.1 10102.55 0.57753524 10104.47 0.123}}}]
         (is (= actual expected))))
     (testing "test sell side zero"
-      (let [actual (handle-change ob "BTC-USD" ["sell" "10102.55" "0"])
+      (let [actual (apply-change "BTC-USD" ob ["sell" "10102.55" "0"])
             expected {"BTC-USD"
                       {:bids {10101.10 0.45054140 10100.90 1.4}
                        :asks {10104.47 0.123}}}]
